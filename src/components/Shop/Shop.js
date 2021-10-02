@@ -3,6 +3,7 @@ import Cart from '../Cart/Cart';
 import Product from '../Product/Product';
 import { addToDb, getStoredCart } from '../../utilities/fakedb';
 import './Shop.css';
+import { NavLink } from 'react-router-dom';
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
@@ -36,8 +37,22 @@ const Shop = () => {
     }, [products])
 
     const handleAddToCart = (product) => {
-        const newCart = [...cart, product];
-        setCart(newCart);
+        // এইখানে চেক করছি নতুন ঝেইটা cart  এ  add  করছি সেইটা আগে থেকে cart  এ আছে কিনা
+ const exist = cart.find(pd => pd.key === product.key)
+let newcart = []
+ if(exist){
+const rest = cart.filter(pds => pds.key !== product.key)
+exist.quantity = exist.quantity + 1
+newcart = [...rest,product]
+ }
+ else{
+    newcart=[...cart, product];
+    product.quantity = 1;
+         
+ }
+
+      
+        setCart(newcart);
         // save to local storage (for now)
         addToDb(product.key);
     }
@@ -70,7 +85,12 @@ const Shop = () => {
                     }
                 </div>
                 <div className="cart-container">
-                    <Cart cart={cart}></Cart>
+                    <Cart cart={cart}>
+
+                        <NavLink to ="/orders">
+                            <button className ="btn-regular">review now</button>
+                        </NavLink>
+                    </Cart>
                 </div>
             </div>
         </>
